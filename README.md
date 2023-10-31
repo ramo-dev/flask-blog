@@ -1,4 +1,4 @@
-#Flask Blog App
+Flask Blog App
 Table of Contents
 
     Description
@@ -32,13 +32,16 @@ Installation
 
     bash
 
-git clone https://github.com/yourusername/your-blog-app.git
+git clone https://github.com/ramo-dev/flask-blog.git
+
+
 
 Change into the project directory:
 
 bash
 
 cd your-blog-app
+
 
 Create a virtual environment and activate it:
 
@@ -47,11 +50,13 @@ bash
 python -m venv venv
 source venv/bin/activate  # On Windows, use: venv\Scripts\activate
 
+
 Install the required packages:
 
 bash
 
 pip install -r requirements.txt
+
 
 Create a .env file with your configuration settings:
 
