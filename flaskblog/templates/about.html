@@ -1,17 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
    <header>
-        <h1 class="border-bottom">Welcome to Bloggit</h1>
+        <h1 class="border-bottom mb-3">Welcome to Bloggit</h1>
     </header>
     <section class="about">
-        <h2>About Us</h2>
-        <p>Bloggit is where the magic of words meets the freedom of anonymity.
+        <h2 style="fontsize:20px">About Us</h2>
+        <p style="fontsize:14px">Bloggit is where the magic of words meets the freedom of anonymity.
            We believe that everyone has a story to tell, a poem to share, or a thought to express. 
            With Bloggit, you can do just that, without any inhibitions.</p>
     </section>
-    <section class="join-us">
-        <h2 class="text-dark">Join Us Today</h2>
-        <p>Join our community and be a part of a platform that celebrates creativity and individuality.</p>
+    <section class="join-us mt-3" >
+        <h2 class="text-dark" style="fontsize:20px">Join Us Today</h2>
+        <p style="fontsize:14px" class="mb-4>Join our community and be a part of a platform that celebrates creativity and individuality.</p>
         <a href={{ url_for('register') }}>
            <button class="btn btn-dark">Get started</button>
         </a>
