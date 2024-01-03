@@ -5,60 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
-    <link rel = "stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     {% if title %}
     <title>Flask Blog - {{ title }}</title>
     {% else %}
     <title>Flask Blog</title>
     {% endif %}
+    <style>
+      /* Custom styles for dark theme */
+      body {
+          background-color: #343a40; /* Set dark background color */
+          color: #ffffff; /* Set light text color */
+      }
+      .navbar-dark .navbar-toggler-icon {
+          filter: invert(1); /* Invert icon color */
+      }
+      .navbar-dark .navbar-nav .nav-link {
+          color: #ffffff; /* Set light text color for navbar links */
+      }
+      .navbar-dark .navbar-nav .nav-link:hover {
+          color: #f0f0f0; /* Set lighter text color on hover */
+      }
+      /* Add more custom styles for dark theme as needed */
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <nav class="navbar navbar-expand-md navbar-dark bg-secondary fixed-top py-3">
-        <div class="container">
-            <a class="navbar-brand mr-4" href="/">Bloggit</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-between" id="navbarToggle">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('home')}}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about')}}">About</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                  {% if current_user.is_authenticated %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('new_post')}}">New Post</a>
-                </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('account')}}">My Account</a>
-                </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('logout')}}">Logout</a>
-                </li>
-                  {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login')}}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register')}}">Register</a>
-                    </li>
-                  {% endif %}
-                </ul>
+    <header class="site-header mb-5">
+        <nav class="navbar navbar-expand-md navbar-dark bg-secondary fixed-top pt-3 ">
+            <div class="container">
+              <ul class="d-flex">
+                <a class="navbar-brand mr-4" href="/" style="font-size: 23px;">Bloggit</a>
+                
+                <form class="d-flex" action="{{ url_for('search_page') }}" method="GET">
+                  <button class="btn btn-secondary" type="submit">
+                      <i class="fas fa-search pt-1" style="font-size: 23px;"></i>
+                  </button>
+              </form>
+              <a href="{{ url_for('inbox') }}">
+                <i class="fas fa-envelope text-white pt-2" style="font-size: 26px;"></i> <!-- Adjust the Font Awesome class based on the desired DM icon -->
+            </a>
+            </ul>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+               
+                <div class="collapse navbar-collapse justify-content-between" id="navbarToggle">
+                    <!-- Navigation links -->
+                    <ul class="navbar-nav">
+                     
+                    </ul>
+                    <!-- Search bar -->
+                   
+                    <!-- Remaining navigation links -->
+                    <ul class="navbar-nav">
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                          <a class="nav-link" href="{{ url_for('home')}}">Home</a>
+                      </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('new_post')}}">New Post</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('account')}}">My Account</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout')}}">Logout</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                          <a class="nav-link" href="{{ url_for('about')}}">About</a>
+                      </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login')}}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register')}}">Register</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
-</header>
+        </nav>
+    </header>
 
 
 
 
-      <main role="main" class="container">
+      <main role="main" class="container bg-inherit">
         <div class="row">
           <div class="col-md-8">
 
@@ -69,33 +105,48 @@
                   <div class="alert alert-{{ category }}">
                     {{ message }}
                   </div>
-
+ 
                 {% endfor %}
               {% endif %}
             {% endwith %}
             {% block content %}{% endblock %}
           </div>
           <div class="col-md-4">
-            <div class="content-section">
-              <h3>Our Sidebar</h3>
-              <p class='text-muted'>You can put any information here you'd like.
+            <div class="content-section bg-dark">
+              <h3 class="text-white">Our Sidebar</h3>
+              <p class='text-secondary'>Browse our categories
                 <ul class="list-group">
-                  <li class="list-group-item list-group-item-light">Latest Posts</li>
-                  <li class="list-group-item list-group-item-light">Announcements</li>
-                  <li class="list-group-item list-group-item-light">Calendars</li>
-                  <li class="list-group-item list-group-item-light">etc</li>
+                  <a href="{{ url_for('home')}}" style="text-decoration: none;"><li class="text-primary list-group-item list-group-item-light bg-dark">Latest Posts</li></a>
+                  <a href="{{ url_for('home')}}" style="text-decoration: none;"><li class="text-primary list-group-item list-group-item-light bg-dark">Announcements</li></a>
+                  <a href="{{ url_for('home')}}" style="text-decoration: none;"><li class="text-primary list-group-item list-group-item-light bg-dark">Calendars</li></a>
+                  <a href="{{ url_for('home')}}" style="text-decoration: none;"><li class="text-primary list-group-item list-group-item-light bg-dark">etc</li></a>
                 </ul>
               </p>
             </div>
+            <div class="content-section bg-dark">
+              <h3 class="bg-dark text-white">Direct Messages</h3>
+              <ul class="list-group">
+                  {% for conversation in direct_messages %}
+                  <a href="{{ url_for('send_message', conversation_id=conversation.id)}}" style="text-decoration: none;">
+                      <li class="text-primary list-group-item list-group-item-light">{{ conversation.other_user.username }}</li>
+                  </a>
+                  {% endfor %}
+              </ul>
+          </div>
+      </div>
           </div>
         </div>
       </main>
       <!-- Remove the container if you want to extend the Footer to full width. -->
-        <footer class="bg-secondary">
+        <footer class="bg-dark">
           </div>
           <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+<<<<<<< HEAD
               Annuar the developer 
             © 2023 Bloggit.com
+=======
+            Annuar the developer © 2024 
+>>>>>>> 868f0ae (ui.revamp,dm feature, search engine and some debugging)
           </div>
         </footer>
 

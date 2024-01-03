@@ -1,14 +1,19 @@
 {% extends "layout.html" %}
 {% block content %}
 {% for post in posts.items %}
-    <article class="media content-section">
-        <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
-        <div class="media-body">
+<script>
+    function handleProfilePictureClick() {
+      document.getElementById('profile_image').click();
+    }
+  </script>
+    <article class="media content-section bg-dark" style="color: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <img class="rounded-circle article-img" id="profile_image" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}" onclick="handleProfilePictureClick()">
+        <div class="media-body" style="margin-left: 15px;">
             <div class="article-metadata">
-            <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
-            <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                <a class="mr-2 text-light" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
             </div>
-            <h2><a class="article-title" href="{{ url_for('post', post_id=post.id)}}">{{ post.title }}</a></h2>
+            <h2><a class="article-title text-light" href="{{ url_for('post', post_id=post.id)}}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
         </div>
     </article>

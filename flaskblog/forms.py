@@ -85,3 +85,8 @@ class ResetPasswordForm(FlaskForm):
     confirm_password = password = PasswordField('confirm password',
                                 validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class MessageForm(FlaskForm):
+    recipient_username = StringField('Recipient Username', validators=[DataRequired()])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Send Message')

@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Search Results</h1>
+    <form class="d-flex mt-3" id="search-form">
+        <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" id="search-input">
+        <button class="btn btn-secondary" type="submit" id="search-btn">
+            <i class="fas fa-search fs-5"></i>
+        </button>
+        <div id="search-suggestions" class="dropdown-menu" aria-labelledby="search-input"></div>
+    </form>
+
+    <div id="search-results" class="mt-4">
+        <!-- Display search results here -->
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const searchSuggestions = document.getElementById('search-suggestions');
+    const searchResults = document.getElementById('search-results');
+    const searchForm = document.getElementById('search-form');
+    const searchBtn = document.getElementById('search-btn');
+
+    searchInput.addEventListener('input', function(event) {
+        const searchTerm = event.target.value.trim();
+        console.log("Search Term:", searchTerm);
+
+        if (searchTerm.length >= 2) {
+            fetch(`/search?term=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Search Data:", data);
+                    displaySearchSuggestions(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            searchSuggestions.innerHTML = '';
+        }
+    });
+
+    function displaySearchSuggestions(searchData) {
+        const { postTitles, usernames } = searchData;
+        searchSuggestions.innerHTML = '';
+
+        postTitles.forEach(title => {
+            const postItem = document.createElement('a');
+            postItem.classList.add('dropdown-item');
+            postItem.textContent = title;
+            searchSuggestions.appendChild(postItem);
+        });
+
+        usernames.forEach(username => {
+            const userItem = document.createElement('a');
+            userItem.classList.add('dropdown-item');
+            userItem.textContent = username;
+            searchSuggestions.appendChild(userItem);
+        });
+    }
+
+    searchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const searchTerm = searchInput.value.trim();
+        console.log("Search Term:", searchTerm);
+
+        if (searchTerm.length >= 2) {
+            fetch(`/search?term=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Search Data:", data);
+                    displaySearchResults(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            searchResults.innerHTML = '';
+        }
+    });
+
+    function displaySearchResults(searchData) {
+        const { postTitles, usernames, postIDs, profilePics, dates } = searchData;
+        searchResults.innerHTML = '';
+
+        // Loop through all posts and display relevant search results
+        for (let i = 0; i < postTitles.length; i++) {
+            const titleLower = postTitles[i].toLowerCase();
+            const usernameLower = usernames[i].toLowerCase();
+            const searchTermLower = searchInput.value.trim().toLowerCase();
+
+            if (titleLower.includes(searchTermLower) || usernameLower.includes(searchTermLower)) {
+
+                const postDiv = document.createElement('div');
+                postDiv.classList.add('media', 'content-section', 'bg-dark');
+
+                const img = document.createElement('img');
+                img.classList.add('rounded-circle', 'article-img');
+                img.src = `/static/profile_pics/${profilePics[i]}`;
+
+                const mediaBody = document.createElement('div');
+                mediaBody.classList.add('media-body');
+
+                const articleMetadata = document.createElement('div');
+                articleMetadata.classList.add('article-metadata');
+
+                const authorLink = document.createElement('a');
+                authorLink.classList.add('mr-2');
+                authorLink.href = `/user/${usernames[i]}`;
+                authorLink.textContent = usernames[i];
+
+                const date = document.createElement('small');
+                date.classList.add('text-muted');
+                date.textContent = dates[i];
+
+                const titleHeader = document.createElement('h2');
+                titleHeader.classList.add('article-title');
+
+                const blogLink = document.createElement('a');
+                blogLink.href = `/post/${postIDs[i]}`;
+                blogLink.textContent = postTitles[i];
+
+                titleHeader.appendChild(blogLink);
+
+                articleMetadata.appendChild(authorLink);
+                articleMetadata.appendChild(date);
+
+                mediaBody.appendChild(articleMetadata);
+                mediaBody.appendChild(titleHeader);
+
+                postDiv.appendChild(img);
+                postDiv.appendChild(mediaBody);
+
+                searchResults.appendChild(postDiv);
+            }
+        }
+    }
+
+    // Fetch and display search results on form submission
+    searchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const searchTerm = searchInput.value.trim();
+        console.log("Search Term:", searchTerm);
+
+        if (searchTerm.length >= 2) {
+            fetch(`/search?term=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Search Data:", data);
+                    displaySearchResults(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            searchResults.innerHTML = '';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <article class="media content-section">
+    <article class="media content-section bg-dark">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
         <div class="media-body">
             <div class="article-metadata">
@@ -15,6 +15,11 @@
             </div>
             <h2 class="article-title">{{ post.title }}</h2>
             <p class="article-content">{{ post.content }}</p>
+            <div>
+              {% if post.author != current_user %}
+                  <a class="btn btn-primary btn-sm m-1" href="{{ url_for('inbox', recipient_id=post.author.id) }}">Send DM</a>
+              {% endif %}
+          </div>
         </div>
     </article>
 

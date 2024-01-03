@@ -3,7 +3,7 @@ from flaskblog import app, db, bcrypt, mail
 from flaskblog.models import User, Post
 import secrets, os
 from PIL import Image
-from flask import Flask, render_template, url_for, flash, redirect, request, abort
+from flask import Flask, render_template, url_for, flash, redirect, request, abort, jsonify
 from flaskblog.forms import (
     RegistrationForm, LoginForm, UpdateAccountForm, PostForm,
     ResetPasswordForm, RequestResetForm
@@ -11,6 +11,9 @@ from flaskblog.forms import (
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 from dotenv import load_dotenv
+from flaskblog.models import Message
+from flaskblog.forms import MessageForm
+
 load_dotenv()
 
 # Home and About Routes
@@ -239,6 +242,68 @@ def reset_token(token):
         flash(f"Your password has been updated! You are now able to log in.", 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
+
+
+@app.route("/message/send", methods=['GET', 'POST'])
+@login_required
+def send_message():
+    form = MessageForm()
+    if form.validate_on_submit():
+        recipient = User.query.filter_by(username=form.recipient_username.data).first()
+        if recipient:
+            message = Message(sender=current_user, recipient=recipient, content=form.content.data)
+            db.session.add(message)
+            db.session.commit()
+            flash('Your message has been sent!', 'success')
+            return redirect(url_for('inbox'))
+        else:
+            flash('Recipient not found!', 'danger')
+    return render_template('send_message.html', title='Send Message', form=form)
+
+@app.route("/message/inbox")
+@login_required
+def inbox():
+    received_messages = current_user.received_messages.order_by(Message.timestamp.desc())
+    return render_template('inbox.html', title='Inbox', messages=received_messages)
+
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    term = request.args.get('term')
+    users = User.query.filter(User.username.ilike(f'%{term}%')).all()
+    posts = Post.query.filter(Post.title.ilike(f'%{term}%')).all()
+
+    usernames = [user.username for user in users]
+    post_titles = [post.title for post in posts]
+    post_ids = [post.id for post in posts]
+    profile_pics = [User.query.get(post.user_id).image_file for post in posts]  # Fetch profile pics based on user_id
+    dates = [post.date_posted.strftime('%Y-%m-%d') for post in posts]  # Format date as needed
+
+    print("Usernames:", usernames)
+    print("Post Titles:", post_titles)
+    print("Post IDs:", post_ids)
+    print("Profile Pics:", profile_pics)
+    print("Dates:", dates)
+
+    return jsonify({
+        'usernames': usernames,
+        'postTitles': post_titles,
+        'postIDs': post_ids,
+        'profilePics': profile_pics,
+        'dates': dates
+    })
+
+
+@app.route('/search-page')
+def search_page():
+    return render_template('search.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
 
 # Activity Feed Route
 @app.route("/activity-feed")
