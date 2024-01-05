@@ -90,3 +90,4 @@ class MessageForm(FlaskForm):
     recipient_username = StringField('Recipient Username', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Send Message')
+    

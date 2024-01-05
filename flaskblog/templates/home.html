@@ -17,6 +17,7 @@
             <p class="article-content">{{ post.content }}</p>
         </div>
     </article>
+
 {% endfor %}
 {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
     {% if page_num %}
@@ -28,5 +29,6 @@
     {% else %}
         ...
     {% endif %}
+    
 {% endfor %}
 {% endblock content %}

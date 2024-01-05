@@ -34,3 +34,4 @@ app.config['MAIL_PASSWORD'] = 'lkosbolnuhnjfgxc'
 mail = Mail(app)
 
 from flaskblog import routes
+
