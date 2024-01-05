@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     post = db.relationship('Post', backref='author', lazy=True)
     sent_messages = db.relationship('Message', foreign_keys='Message.sender_id', backref='sender', lazy='dynamic')
     received_messages = db.relationship('Message', foreign_keys='Message.recipient_id', backref='recipient', lazy='dynamic')
-
+    
 
     # generate tokens
     

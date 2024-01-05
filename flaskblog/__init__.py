@@ -1,16 +1,25 @@
+# __init__.py
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_socketio import SocketIO, emit
+from flask_migrate import Migrate, upgrade
 import os
 
 app = Flask(__name__)
+
+socketio = SocketIO(app)
 
 app.config['SECRET_KEY'] = 'd1272661fd1b7bc6b5971bda2a5a00a4'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
+
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'

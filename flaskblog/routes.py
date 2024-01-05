@@ -13,6 +13,8 @@ from flask_mail import Message
 from dotenv import load_dotenv
 from flaskblog.models import Message
 from flaskblog.forms import MessageForm
+from flask_socketio import emit, SocketIO
+from flaskblog import socketio
 
 load_dotenv()
 
@@ -244,27 +246,59 @@ def reset_token(token):
     return render_template('reset_token.html', title='Reset Password', form=form)
 
 
-@app.route("/message/send", methods=['GET', 'POST'])
+@app.route("/send_message/<recipient_username>", methods=['GET', 'POST'])
 @login_required
-def send_message():
+def send_message(recipient_username):
     form = MessageForm()
-    if form.validate_on_submit():
-        recipient = User.query.filter_by(username=form.recipient_username.data).first()
-        if recipient:
-            message = Message(sender=current_user, recipient=recipient, content=form.content.data)
-            db.session.add(message)
-            db.session.commit()
-            flash('Your message has been sent!', 'success')
-            return redirect(url_for('inbox'))
-        else:
-            flash('Recipient not found!', 'danger')
-    return render_template('send_message.html', title='Send Message', form=form)
+    recipient = User.query.filter_by(username=recipient_username).first()
+    user = User.query.filter_by(username=current_user.username).first()
+    received_messages = Message.query.filter_by(recipient=user).all()
+    sent_messages = Message.query.filter_by(sender=user).all()
+    users = User.query.all()
+    previous_messages = [message.body for message in received_messages]  # Get previous messages from the database
 
-@app.route("/message/inbox")
+    if form.validate_on_submit():
+        message = Message(
+            title=form.title.data,
+            body=form.body.data,
+            sender=user,
+            recipient=recipient
+        )
+        db.session.add(message)
+        db.session.commit()
+        flash("Message Sent", "success")
+        socketio.emit('receive_message', {'message': message.body}, room=current_user.username)
+        return redirect(url_for(
+            'show_conversation',
+            username1=user.username,
+            username2=recipient.username
+        ))
+
+    # Send user details and previous messages to the client
+    socketio.emit('user_details', {
+        'recipient': {
+            'name': recipient.name,
+            'profile_picture': recipient.profile_picture
+        },
+        'previous_messages': previous_messages
+    }, room=current_user.username)
+
+    return render_template('send_message.html',
+                           title="New Message",
+                           form=form,
+                           username=user.username,
+                           recipient=recipient_username,
+                           received_messages=received_messages,
+                           sent_messages=sent_messages,
+                           users=users)
+
+@app.route("/inbox")
 @login_required
 def inbox():
     received_messages = current_user.received_messages.order_by(Message.timestamp.desc())
-    return render_template('inbox.html', title='Inbox', messages=received_messages)
+    users = User.query.filter(User.id != current_user.id).all()  # Exclude the current user from the list
+    return render_template('inbox.html', title='Inbox', user=current_user, messages=received_messages, users=users)
+
 
 
 
@@ -295,6 +329,7 @@ def search():
     })
 
 
+
 @app.route('/search-page')
 def search_page():
     return render_template('search.html')
@@ -303,6 +338,13 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
 
 
 # Activity Feed Route

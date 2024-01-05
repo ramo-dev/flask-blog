@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="content-section">
+<div class="content-section bg-dark text-white pb-4" style="border-radius: 15px;">
     <form method="post" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
@@ -18,7 +18,7 @@
                 </div>
 
                     {% else %}
-                    {{form.title(class="form-control form-control-lg")}}
+                    {{form.title(class="form-control form-control-lg bg-secondary-subtle")}}
                 {% endif %}
             </div>
 
@@ -34,7 +34,7 @@
                 </div>
 
                     {% else %}
-                    {{form.content(class="form-control form-control-lg")}}
+                    {{form.content(class="form-control form-control-lg bg-secondary-subtle")}}
                 {% endif %}
             </div>
         </fieldset>

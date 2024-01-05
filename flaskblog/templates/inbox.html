@@ -1,92 +1,62 @@
+<!-- Modified HTML code without Socket.IO and off-canvas structure -->
 {% extends "layout.html" %}
-
 {% block content %}
-<section style="background-color: #343a40;">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card" id="chat3" style="border-radius: 15px;">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='chats.css')}}">
+    <section style="background-color: #343a40;">
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card" id="chat3" style="border-radius: 15px;">
+                        <div class="card-body bg-dark" style="border: 1px white; border-radius: 15px;width: 100%;">
+                            <div class="row">
                                 <!-- Left sidebar with contacts -->
-                                <div class="">
-                                    <div class="input-group rounded mb-3">
-                                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-                                            aria-describedby="search-addon" />
-                                        <span class="input-group-text border-0" id="search-addon">
-                                            <i class="fas fa-search"></i>
-                                        </span>
-                                    </div>
-
-                                    <div data-mdb-perfect-scrollbar="true" style="position: relative; height: 100px">
-                                        <ul class="list-unstyled mb-0" style="width: 40vh;">
-                                            <!-- Sample contacts -->
-                                            <!-- Replace this with your contact list -->
-                                            <!-- Example contact -->
-                                            <li class=" border-bottom ">
-                                                <a href="#!" class="d-flex justify-content-between">
-                                                    <div class="d-flex flex-row">
+                                <div class="p-3" style="width: 100%; overflow-y: auto; height: fit-content;">
+                                    <form class="d-flex mb-4" id="search-form">
+                                        <!-- Search input field -->
+                                        <input class="form-control me-2 bg-dark-subtle text-light" type="search" placeholder="Search contacts..." aria-label="Search" id="search-input">
+                                        <button class="btn btn-dark mt-1" type="submit" id="search-btn">
+                                            <i class="fas fa-search fs-3"></i>
+                                        </button>
+                                        <!-- Suggestions dropdown -->
+                                        <div id="search-suggestions" class="dropdown-menu" aria-labelledby="search-input"></div>
+                                    </form>
+                                    <div data-mdb-perfect-scrollbar="true" id="user-list-container">
+                                        <ul class="list-unstyled mb-0" id="user-list">
+                                            <!-- Loop through all users -->
+                                            {% for user in users %}
+                                                <li class="border-bottom py-2" style="display: block;">
+                                                    <!-- User link -->
+                                                    <a href="{{url_for('send_message', recipient_username=user.username)}}" class="d-flex justify-content-between text-decoration-none recipient" data-username="{{ user.username }}">
+                                                        <!-- User avatar -->
+                                                    <div class="d-flex">
                                                         <div>
-                                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                                                alt="avatar" class="d-flex align-self-center " width="60">
+                                                            <img src="{{ url_for('static', filename=user.image_file) }}" alt="avatar" class="d-flex align-self-center" width="60">
                                                             <span class="badge bg-success badge-dot"></span>
                                                         </div>
+                                                        <!-- User details -->
                                                         <div class="pt-2 ps-2">
-                                                            <p class="fw-bold mb-0">Marie Horwitz</p>
-                                                            <p class="small text-muted">Hello, Are you there?</p>
+                                                            <p class="fw-bold mb-0">{{ user.username }}</p>
+                                                            <!-- Last message or placeholder -->
+                                                            {% if user.last_message %}
+                                                                <p class="small text-white">{{ user.last_message.content }}</p>
+                                                            {% else %}
+                                                                <p class="small text-white">Say Hello!</p>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
-                                                    <div class="pt-1">
-                                                        <p class="small text-muted mb-1">Just now</p>
-                                                        <span class="badge bg-danger rounded-pill float-end">3</span>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <!-- Repeat this structure for multiple contacts -->
-                                            
+                                                        <!-- Last message time or placeholder -->
+                                                        <div class="pt-1">
+                                                            {% if user.last_message %}
+                                                                <p class="small text-white mb-1">{{ user.last_message.timestamp.strftime('%b %d, %Y') }}</p>
+                                                            {% else %}
+                                                                <p class="small text-white mb-1">Just now</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            {% endfor %}
                                         </ul>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 col-lg-7 col-xl-8 ms-5" style="width: 47vh;">
-                                <!-- Chat conversation area -->
-                                <div class="pt-3 pe-3" data-mdb-perfect-scrollbar="true"
-                                    style="position: relative; height: 400px">
-                                    <!-- Chat messages will appear here -->
-                                    <!-- Replace this with the conversation content -->
-                                </div>
-
-                                <!-- Input field for sending messages -->
-                                <div class="text-muted d-flex justify-content-start align-items-center pe-2 pt-3 mt-2">
-                                    <!-- Message sender's avatar -->
-                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp"
-                                        alt="avatar 3" style="width: 35px; height: 100%;">
-
-                                    <!-- Message input field and send button -->
-                                    <input type="text" class="form-control form-control-lg mx-2 input-field " id="exampleFormControlInput2"
-                                        placeholder="Type message" style="width: 40vh;">
-                                        <style>
-                                            .input-field {
-                                                        border:1px solid black;
-                                                        background-image:none;
-                                                        background-color: white;
-                                                        border-radius: 1.125rem ;
-                                                        flex-grow: 1;
-                                                        font-size: 15px;
-                                                        box-shadow: 
-                                                            0 0 1rem rgba(black, 0.1),
-                                                            0rem 1rem 1rem -1rem rgba(black, 0.2);
-                                                        
-                                                        font-family: Red hat Display, sans-serif;
-                                                        font-weight: 400;
-                                                        letter-spacing: 0.025em;
-                                                    }
-                                        </style>
-                                    <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
-                                    <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
-                                    <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -94,6 +64,62 @@
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
+<script>
+    const socket = io();
+
+// Fetch the user's details from the server
+socket.on('connect', () => {
+    console.log('Connected to Socket.IO server');
+    socket.emit('fetch_user_details'); // Send an event to the server to fetch user details
+});
+
+socket.on('disconnect', () => {
+    console.log('Disconnected from Socket.IO server');
+});
+
+// Receive user details from the server
+socket.on('user_details', (data) => {
+    const recipientName = data.recipient.name;
+    const profilePicture = data.recipient.profile_picture;
+    const previousMessages = data.previous_messages;
+
+    // Update the recipient's name
+    const recipientNameElement = document.querySelector('.text-light.mb-0');
+    recipientNameElement.textContent = recipientName;
+
+    // Update the recipient's profile picture
+    const profilePictureElement = document.querySelector('img[alt="recipient_avatar"]');
+    profilePictureElement.src = profilePicture;
+
+    // Display the previous messages in the conversation area
+    const conversationArea = document.querySelector('.pt-3');
+    previousMessages.forEach((message) => {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        conversationArea.appendChild(messageElement);
+    });
+});
+
+// Send message event
+const messageInput = document.querySelector('.message-input');
+const sendButton = document.querySelector('.fa-paper-plane');
+sendButton.addEventListener('click', () => {
+    const message = messageInput.value;
+    socket.emit('send_message', { message });
+    messageInput.value = '';
+});
+
+// Receive message event
+socket.on('receive_message', (data) => {
+    const message = data.message;
+    // Display the received message in the conversation area
+    const conversationArea = document.querySelector('.pt-3');
+    const messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    conversationArea.appendChild(messageElement);
+});
+</script>
+
 {% endblock %}

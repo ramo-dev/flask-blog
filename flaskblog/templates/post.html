@@ -1,7 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
     <article class="media content-section bg-dark">
+      <div class="d-flex justify-content-between align-items-center">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+        {% if post.author != current_user %}
+        <a class="btn btn-dark btn-sm h-50 fs-3" href="{{ url_for('send_message', recipient_username=post.author.username) }}"><i class="fas fa-paper-plane text-white recipient"></i></a>
+            {% endif %}
+        </div>
         <div class="media-body">
             <div class="article-metadata">
             <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
@@ -15,11 +20,6 @@
             </div>
             <h2 class="article-title">{{ post.title }}</h2>
             <p class="article-content">{{ post.content }}</p>
-            <div>
-              {% if post.author != current_user %}
-                  <a class="btn btn-primary btn-sm m-1" href="{{ url_for('inbox', recipient_id=post.author.id) }}">Send DM</a>
-              {% endif %}
-          </div>
         </div>
     </article>
 
@@ -40,5 +40,18 @@
           </div>
         </div>
       </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+              const recipients = document.querySelectorAll('.recipient');
+              // Attach click event listeners to recipients
+              recipients.forEach(recipient => {
+                  recipient.addEventListener('click', function () {
+                      const username = this.dataset.username; // Get recipient's username
+                      window.location.href = `/send_message/${username}`; // Redirect to send_message route with the username parameter
+                  });
+              });
+          });
+      </script>
       
 {% endblock content %}
