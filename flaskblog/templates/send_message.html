@@ -38,18 +38,17 @@
         }
     </style>
 
-<div class="d-flex align-items-center justify-content-between mb-3">
-    <a class="text-light" href="{{url_for('inbox')}}"><i class="fas fa-arrow-left back-arrow fs-3"></i></a>
-    <div class="d-flex align-items-center">
+<div class="d-flex align-items-center justify-content-start mb-3" style="margin-top: -27px;">
+    <a class="text-light me-3" href="{{url_for('inbox')}}"><i class="fas fa-arrow-left back-arrow fs-3"></i></a>
+    <div class="d-flex justify-content-between">
         <!-- Display the recipient's profile picture -->
         <img src="{{ url_for('static', filename='profile_pics/' +recipient.image_file) }}" alt="avatar" class="d-flex align-self-center rounded-circle" width="60" height="60">
-        <h5 class="text-light mb-0 recipient fw-bold fs-3">{{recipient.username}}</h5>
+        <h5 class="text-light mb-0 recipient fw-bold fs-3 ms-3 mt-2">{{recipient.username}}</h5>
     <!-- delete all user chats feature -->
     </div>
-    <div></div>
 </div>
 
-    <section class="bg-dark" style="width: 105%; margin-left:-10px; margin-top:-16px">
+    <section class="bg-dark" style="width: 105%; margin-left:-10px; margin-top:-25px">
         <div class="container pb-5">
             <div class="row">
                 <div class="col-md-12">
