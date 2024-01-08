@@ -271,17 +271,16 @@ def send_message(recipient_username):
         db.session.add(message)
         db.session.commit()
         flash("Message Sent", "success")
-        socketio.emit('receive_message', {'message': message.body}, room=current_user.username)
+        socketio.emit('receive_message', {'message': message.body}, room=recipient.username)
         return redirect(url_for(
-            'show_conversation',
-            username1=user.username,
-            username2=recipient.username
+            'send_message',
+            recipient_username=recipient.username
         ))
 
     # Send user details and previous messages to the client
     socketio.emit('user_details', {
         'recipient': {
-            'name': recipient.username,
+            'username': recipient.username,
             'profile_picture': recipient.image_file
         },
         'previous_messages': previous_messages
@@ -290,12 +289,12 @@ def send_message(recipient_username):
     return render_template('send_message.html',
                            title="New Message",
                            form=form,
-                           username=user.username,
                            recipient=recipient,
                            recipient_username=recipient_username,
                            received_messages=received_messages,
                            sent_messages=sent_messages,
                            users=users)
+
 
 
 @app.route("/inbox")
