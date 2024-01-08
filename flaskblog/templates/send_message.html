@@ -41,9 +41,10 @@
 <div class="d-flex align-items-center justify-content-between mb-3">
     <a class="text-light" href="{{url_for('inbox')}}"><i class="fas fa-arrow-left back-arrow fs-3"></i></a>
     <div class="d-flex align-items-center">
-        <h5 class="text-light mb-0">{{recipient.name}}</h5>
         <!-- Display the recipient's profile picture -->
-        <img src="{{ recipient.profile_picture }}" alt="recipient_avatar" class="me-2" style="width: 40px; height: 40px; border-radius: 50%;">
+        <img src="{{ url_for('static', filename='profile_pics/' +recipient.image_file) }}" alt="avatar" class="d-flex align-self-center rounded-circle" width="60" height="60">
+        <h5 class="text-light mb-0 recipient fw-bold fs-3">{{recipient.username}}</h5>
+    <!-- delete all user chats feature -->
     </div>
     <div></div>
 </div>

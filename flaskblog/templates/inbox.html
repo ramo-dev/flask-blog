@@ -30,7 +30,7 @@
                                                         <!-- User avatar -->
                                                     <div class="d-flex">
                                                         <div>
-                                                            <img src="{{ url_for('static', filename=user.image_file) }}" alt="avatar" class="d-flex align-self-center" width="60">
+                                                            <img src="{{ url_for('static', filename='profile_pics/' +user.image_file) }}" alt="avatar" class="d-flex align-self-center rounded-circle" width="60" height="60">
                                                             <span class="badge bg-success badge-dot"></span>
                                                         </div>
                                                         <!-- User details -->
@@ -81,7 +81,7 @@ socket.on('disconnect', () => {
 
 // Receive user details from the server
 socket.on('user_details', (data) => {
-    const recipientName = data.recipient.name;
+    const recipientName = data.recipient.username;
     const profilePicture = data.recipient.profile_picture;
     const previousMessages = data.previous_messages;
 

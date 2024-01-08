@@ -250,12 +250,16 @@ def reset_token(token):
 @login_required
 def send_message(recipient_username):
     form = MessageForm()
-    recipient = User.query.filter_by(username=recipient_username).first()
     user = User.query.filter_by(username=current_user.username).first()
     received_messages = Message.query.filter_by(recipient=user).all()
     sent_messages = Message.query.filter_by(sender=user).all()
     users = User.query.all()
     previous_messages = [message.body for message in received_messages]  # Get previous messages from the database
+
+    recipient = User.query.filter_by(username=recipient_username).first()
+    # Check if the user exists
+    if not recipient:
+        abort(404)
 
     if form.validate_on_submit():
         message = Message(
@@ -277,8 +281,8 @@ def send_message(recipient_username):
     # Send user details and previous messages to the client
     socketio.emit('user_details', {
         'recipient': {
-            'name': recipient.name,
-            'profile_picture': recipient.profile_picture
+            'name': recipient.username,
+            'profile_picture': recipient.image_file
         },
         'previous_messages': previous_messages
     }, room=current_user.username)
@@ -287,10 +291,12 @@ def send_message(recipient_username):
                            title="New Message",
                            form=form,
                            username=user.username,
-                           recipient=recipient_username,
+                           recipient=recipient,
+                           recipient_username=recipient_username,
                            received_messages=received_messages,
                            sent_messages=sent_messages,
                            users=users)
+
 
 @app.route("/inbox")
 @login_required
