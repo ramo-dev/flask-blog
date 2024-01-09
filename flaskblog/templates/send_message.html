@@ -51,6 +51,40 @@
         .chat-ui-1{
             width: 110%;
         }}
+        .message-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .conversation-area {
+            max-height: 400px; /* Limit the conversation area height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            padding-bottom: 10px; /* Add some bottom padding */
+        }
+    .message-bubble {
+        max-width: 70%; /* Adjust as needed */
+        padding: 8px 12px;
+        border-radius: 12px;
+        word-wrap: break-word;
+    }
+
+    .sent {
+        float: right;
+        align-self: flex-end;
+        color: #000000;
+        margin-right: 10px;
+        background-color: #b4b4b4; /* Example color for sent messages */
+    }
+
+    .received {
+        color: #ffffff;
+        float:left;
+        align-self: flex-start;
+        color: #fff;
+        background-color: #000000; /* Example color for received messages */
+    }
+
     </style>
 
 <div class="d-flex align-items-center justify-content-start mb-3" style="margin-top: -27px;">
@@ -69,25 +103,32 @@
                 <div class="col-md-12">
                     <div class="card bg-dark text-light chat-ui-1" id="chat3" style="border: none;">
                         <div class="card-body chat-ui" style="background: linear-gradient(#00000096, rgba(128, 128, 128, 0),);">
+                            
                             <div class="row px-1 " style="width:106%;margin-left: -20px;">
                                 <div class="px-1">
+                                    
                                     <!-- Chat conversation area -->
-                                    <div class="pt-3" data-mdb-perfect-scrollbar="true"
-                                        style="position: relative; height: 400px; border-top-right-radius: 18px;border-top-left-radius: 18px;background: linear-gradient(#161616d0,rgba(0, 0, 0, 0)); ">
-                                        
-                                        <!-- Replace this with the conversation content from the database -->
-                                    </div>
+                                    <div class="pt-3 conversation-area" data-mdb-perfect-scrollbar="true"
+    style="position: relative; height: 400px; border-top-right-radius: 18px; border-top-left-radius: 18px; background: linear-gradient(#161616d0, rgba(0, 0, 0, 0));">
+    <!-- Replace this with the conversation content from the database -->
+</div>
+<div class="message-container ms-2"> 
+    <!-- Message bubbles will be added dynamically here -->
+</div>
                                     <!-- Input field for sending messages -->
                                     <div class="text-light d-flex justify-content-start align-items-center pt-3 mt-2 pb-4 px-2" style="background:linear-gradient(rgba(0, 0, 0, 0),black 100%);border-bottom-left-radius:30px ;border-bottom-right-radius:30px ;">
                                         <!-- Message sender's avatar -->
                                         <img src="{{url_for('static', filename='profile_pics/' +current_user.image_file)}}"
                                             alt="avatar 3" width="40" height="40" class="rounded-circle">
+
+                                             <!-- Message container -->
+    
                                         <!-- Message input field and send button -->
                                         <input type="text" class="form-control form-control-lg text-light rounded-pill mx-2 message-input" style="background-color: inherit;"
                                             color="white" id="exampleFormControlInput2" placeholder="Type message">
                                         <a class="ms-1 text-light" href="#!"><i class="fas fa-paperclip fs-5"></i></a>
                                         <a class="ms-2 text-light" href="#!"><i class="fas fa-smile fs-5"></i></a>
-                                        <a class="ms-2 text-light btn btn-dark p-1 px-2" onclick="sendMessage()"><i class="fas fa-paper-plane fs-5"></i></a>
+                                        <a class="ms-2 text-light btn btn-dark p-1 px-2" id="sendBtn"><i class="fas fa-paper-plane fs-5"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -98,6 +139,7 @@
         </div>
     </section>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script>
         const socket = io();
 
@@ -120,24 +162,23 @@ socket.on('user_details', (data) => {
     });
 });
 
-// Function to display messages in UI
 const displayMessage = (message, messageType) => {
-    const conversationArea = document.querySelector('.conversation-area');
-    const messageElement = document.createElement('div');
-    messageElement.textContent = message;
-    messageElement.classList.add('message', messageType);
-    conversationArea.appendChild(messageElement);
-};
+        const messageContainer = document.querySelector('.message-container');
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messageElement.classList.add('message-bubble', messageType);
+        messageContainer.appendChild(messageElement);
+    };
 
-// Send message function
-const sendMessage = () => {
-    const messageInput = document.querySelector('.message-input');
-    const message = messageInput.value;
-    socket.emit('send_message', { message });
-    messageInput.value = '';
-    displayMessage(message, 'sent');
-};
-
+    // Attaching click event listener to the send button
+    document.getElementById('sendBtn').addEventListener('click', () => {
+        const messageInput = document.querySelector('.message-input');
+        const message = messageInput.value;
+        // Mock socket.emit('send_message', { message });
+        // Replace with actual socket implementation
+        messageInput.value = '';
+        displayMessage(message, 'sent');
+    });
     </script>
     
 {% endblock %}
