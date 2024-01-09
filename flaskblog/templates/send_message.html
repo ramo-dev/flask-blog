@@ -109,12 +109,12 @@
                                     
                                     <!-- Chat conversation area -->
                                     <div class="pt-3 conversation-area" data-mdb-perfect-scrollbar="true"
-    style="position: relative; height: 400px; border-top-right-radius: 18px; border-top-left-radius: 18px; background: linear-gradient(#161616d0, rgba(0, 0, 0, 0));">
-    <!-- Replace this with the conversation content from the database -->
-</div>
-<div class="message-container ms-2"> 
-    <!-- Message bubbles will be added dynamically here -->
-</div>
+                                            style="position: relative; height: 400px; border-top-right-radius: 18px; border-top-left-radius: 18px; background: linear-gradient(#161616d0, rgba(0, 0, 0, 0));">
+                                            <!-- Replace this with the conversation content from the database -->
+                                        </div>
+                                        <div class="message-container ms-2"> 
+                                            <!-- Message bubbles will be added dynamically here -->
+                                        </div>
                                     <!-- Input field for sending messages -->
                                     <div class="text-light d-flex justify-content-start align-items-center pt-3 mt-2 pb-4 px-2" style="background:linear-gradient(rgba(0, 0, 0, 0),black 100%);border-bottom-left-radius:30px ;border-bottom-right-radius:30px ;">
                                         <!-- Message sender's avatar -->
@@ -141,44 +141,91 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
     <script>
-        const socket = io();
+       const socket = io();
 
 // Fetch user details and previous messages from the server
 socket.on('connect', () => {
-    socket.emit('fetch_user_details');
+  console.log('Connected to the server');
+  socket.emit('fetch_user_details');
 });
 
 // Update UI with user details and previous messages
 socket.on('user_details', (data) => {
-    const recipientNameElement = document.querySelector('.recipient');
-    recipientNameElement.textContent = data.recipient.username;
+  console.log('Received user details:', data);
+  const recipientNameElement = document.querySelector('.recipient');
+  recipientNameElement.textContent = data.recipient.username;
 
-    const profilePictureElement = document.querySelector('.profile-picture');
-    profilePictureElement.src = data.recipient.profile_picture;
+  const profilePictureElement = document.querySelector('.profile-picture');
+  profilePictureElement.src = data.recipient.profile_picture;
 
-    const conversationArea = document.querySelector('.conversation-area');
-    data.previous_messages.forEach((message) => {
-        displayMessage(message, 'received');
-    });
+  const messageContainer = document.querySelector('.message-container');
+  data.previous_messages.forEach((message) => {
+    displayMessage(message.body, message.timestamp, message.type);
+  });
 });
 
-const displayMessage = (message, messageType) => {
-        const messageContainer = document.querySelector('.message-container');
-        const messageElement = document.createElement('div');
-        messageElement.textContent = message;
-        messageElement.classList.add('message-bubble', messageType);
-        messageContainer.appendChild(messageElement);
-    };
 
-    // Attaching click event listener to the send button
-    document.getElementById('sendBtn').addEventListener('click', () => {
-        const messageInput = document.querySelector('.message-input');
-        const message = messageInput.value;
-        // Mock socket.emit('send_message', { message });
-        // Replace with actual socket implementation
-        messageInput.value = '';
-        displayMessage(message, 'sent');
-    });
+// Attaching click event listener to the send button
+document.getElementById('sendBtn').addEventListener('click', () => {
+  const messageInput = document.querySelector('.message-input');
+  const message = messageInput.value;
+
+  // Emit the message to the server
+  console.log('Sending message:', message);
+  socket.emit('send_message', { message });
+
+  messageInput.value = '';
+});
+
+// Receive and display new messages from the server in real-time
+socket.on('receive_message', (data) => {
+  console.log('Received new message:', data); // Check if data is received correctly
+
+  // Call the displayMessage function to render the message in the UI
+  displayMessage(data.message, data.timestamp, 'received');
+
+  // Scroll down functionality for chat window
+  let container = document.querySelector(".message-container");
+  container.scrollTop = container.scrollHeight;
+});
+
+// Fetching messages from the server when the page loads
+// (You can trigger this based on user interaction or other events)
+socket.on('fetch_previous_messages', (data) => {
+  console.log('Fetched previous messages:', data);
+  // Display previous messages fetched from the database
+  data.messages.forEach((message) => {
+    displayMessage(message.body, message.timestamp, message.type);
+  });
+
+  // Scroll to the bottom of the chat window
+  let container = document.querySelector(".message-container");
+  container.scrollTop = container.scrollHeight;
+});
+function displayMessage(message, timestamp, type) {
+  const conversationArea = document.querySelector('.conversation-area');
+
+  // Create a message bubble element
+  const messageBubble = document.createElement('div');
+  messageBubble.classList.add('message-bubble');
+
+  // Set the appropriate class for sent or received messages
+  if (type === 'sent') {
+    messageBubble.classList.add('sent');
+  } else {
+    messageBubble.classList.add('received');
+  }
+
+  // Set the message text and timestamp
+  messageBubble.textContent = message;
+  const timestampElement = document.createElement('span');
+  timestampElement.classList.add('timestamp');
+  timestampElement.textContent = timestamp;
+  messageBubble.appendChild(timestampElement);
+
+  // Append the message bubble to the conversation area
+  conversationArea.appendChild(messageBubble);
+}
     </script>
     
 {% endblock %}

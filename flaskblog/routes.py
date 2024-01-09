@@ -276,7 +276,7 @@ def send_message(recipient_username):
             'send_message',
             recipient_username=recipient.username
         ))
-
+    
     # Send user details and previous messages to the client
     socketio.emit('user_details', {
         'recipient': {
@@ -294,8 +294,7 @@ def send_message(recipient_username):
                            received_messages=received_messages,
                            sent_messages=sent_messages,
                            users=users)
-
-
+    
 
 @app.route("/inbox")
 @login_required

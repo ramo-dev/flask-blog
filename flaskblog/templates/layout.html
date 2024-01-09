@@ -13,13 +13,14 @@
     <link menu__link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css')}}">
     <link menu__link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     {% if title %}
-    <title>Flask Blog - {{ title }}</title>
+    <title>Bloggspot - {{ title }}</title>
     {% else %}
-    <title>Flask Blog</title>
+    <title>Bloggspot</title>
     {% endif %}
     <style>
       /* Custom styles for dark theme */
       body {
+          scroll-behavior: smooth;
           background-color: #343a40; /* Set dark background color */
           color: #ffffff; /* Set light text color */
       }
@@ -32,6 +33,13 @@
       .navbar-dark .navbar-nav .nav-link menu__link:hover {
           color: #f0f0f0; /* Set lighter text color on hover */
       }
+      .navbar-brand{
+        transition: ease-in-out 0.7s;
+      }
+      .navbar-brand:hover{
+        transition: ease-in-out 0.6s;
+        transform: scale(1.2);
+      }
       /* Add more custom styles for dark theme as needed */
   </style>
 </head>
@@ -39,24 +47,23 @@
     <header class="site-header mb-5">
         <nav class="navbar navbar-expand-md navbar-dark bg-secondary fixed-top mb-3 pt-3">
             <div class="container">
-              <ul class="d-flex">
-                <a class="navbar-brand mr-4" href="/" style="font-size: 23px;">Bloggit</a>
-                
+              <ul class="d-flex align-items-center">
+                <a class="navbar-brand pt-2" href="/"><img src="{{url_for('static', filename="Bloggspot.png")}}" width="140" height="45" style="margin-left: -30px;"></a>
                 <form class="d-flex" action="{{ url_for('search_page') }}" method="GET">
                   <button class="btn btn-secondary" type="submit">
-                      <i class="fas fa-search pt-1" style="font-size: 23px;"></i>
+                      <i class="fas fa-search" style="font-size: 23px;"></i>
                   </button>
               </form>
               {% if current_user.is_authenticated %}
               <a href="{{ url_for('inbox') }}">
                 <button class="btn btn-secondary" type="submit">
-                <i class="fas fa-envelope text-white pt-1" style="font-size: 26px;"></i>
+                <i class="fas fa-envelope text-white" style="font-size: 26px;"></i>
               </button>
             </a>
               {% endif %}
               
             </ul>
-                <button class="navbar-toggler mb-3 me-3 p-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+                <button style="border: none;" class="navbar-toggler mb-3 me-3 p-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                
@@ -68,7 +75,7 @@
                     <!-- Search bar -->
                    
                     <!-- Remaining navigation links -->
-                    <ul class="navbar-nav" style="font-size: 17px;">
+                    <ul class="navbar-nav pb-4" style="font-size: 17px;">
                         {% if current_user.is_authenticated %}
                         
                         <li class="nav-item">
